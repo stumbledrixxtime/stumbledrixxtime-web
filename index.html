@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StumbleDrix X Time</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#050a05;--card:#0a140a;--card2:#0d180d;--accent:#39ff14;--accent2:#5bff42;--text:#e0f5e0;--text2:#7aa87a;--red:#ff4466;--green:#39ff14;--border:#1a3a1a}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bg-anim{position:fixed;top:0;left:0;width:100vw;height:100vh;border:none;z-index:-1;pointer-events:none}
+.container{width:100%;max-width:420px;padding:20px;position:relative;z-index:1}
+.logo-wrap{text-align:center;margin-bottom:32px}
+.logo-wrap h1{font-size:28px;font-weight:800;background:linear-gradient(135deg,#39ff14,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.5px;text-shadow:0 0 30px rgba(57,255,20,.3)}
+.logo-wrap p{color:var(--text2);font-size:14px;margin-top:6px}
+.card{background:rgba(8,16,8,0.88);border:1px solid rgba(57,255,20,.15);border-radius:16px;padding:32px;backdrop-filter:blur(20px);box-shadow:0 0 40px rgba(57,255,20,.05)}
+.tabs{display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:24px}
+.tab{flex:1;padding:10px;text-align:center;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:var(--text2);transition:.2s}
+.tab.active{background:linear-gradient(135deg,#39ff14,#00cc44);color:#000}
+.tab:hover:not(.active){color:var(--text)}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.form-group input{width:100%;padding:12px 16px;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;outline:none;transition:.2s}
+.form-group input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(57,255,20,.15)}
+.form-group input::placeholder{color:#555}
+.btn{width:100%;padding:13px;background:linear-gradient(135deg,#39ff14,#00cc44);border:none;border-radius:10px;color:#000;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;margin-top:8px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(57,255,20,.35)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.msg{padding:12px 16px;border-radius:10px;font-size:13px;font-weight:500;margin-top:16px;display:none}
+.msg.err{display:block;background:rgba(255,68,102,.1);border:1px solid rgba(255,68,102,.2);color:var(--red)}
+.msg.ok{display:block;background:rgba(34,221,119,.1);border:1px solid rgba(34,221,119,.2);color:var(--green)}
+.profile{display:none}
+.profile .avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#39ff14,#00cc44);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#000;margin:0 auto 16px;box-shadow:0 0 20px rgba(57,255,20,.3)}
+.profile h2{text-align:center;font-size:20px;margin-bottom:4px}
+.profile .sub{text-align:center;color:var(--text2);font-size:14px;margin-bottom:24px}
+.profile .info-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.profile .info-row:last-child{border:none}
+.profile .info-row .label{color:var(--text2);font-size:13px}
+.profile .info-row .value{font-weight:600;font-size:14px}
+.profile .edit-section{margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+.btn-outline{width:100%;padding:11px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:14px;font-weight:600;cursor:pointer;transition:.2s;margin-top:12px}
+.btn-outline:hover{border-color:#39ff14;color:#39ff14}
+.btn-sm{padding:10px 20px;font-size:13px;margin-top:12px}
+.btn-launch{width:100%;padding:16px;background:linear-gradient(135deg,#39ff14,#00cc44);border:none;border-radius:12px;color:#000;font-size:17px;font-weight:800;cursor:pointer;transition:.2s;margin-top:20px;text-transform:uppercase;letter-spacing:1px;position:relative;overflow:hidden;box-shadow:0 0 20px rgba(57,255,20,.3)}
+.btn-launch:hover{transform:translateY(-2px);box-shadow:0 0 35px rgba(57,255,20,.5)}
+.btn-launch:active{transform:translateY(0)}
+.btn-launch::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,.15) 0%,transparent 60%);animation:pulse-glow 2s ease-in-out infinite}
+@keyframes pulse-glow{0%,100%{opacity:.5;transform:scale(.8)}50%{opacity:1;transform:scale(1)}}
+.link{background:none;border:none;color:var(--text2);font-size:12px;cursor:pointer;text-align:center;width:100%;margin-top:8px;padding:4px;font-weight:500;transition:.2s}
+.link:hover{color:var(--accent);text-decoration:underline}
+.hint{font-size:12px;color:var(--text2);margin-top:8px;text-align:center;padding:8px 4px;line-height:1.5}
+.hint code{color:var(--accent);background:rgba(57,255,20,.08);padding:2px 6px;border-radius:4px;font-family:Consolas,monospace}
+</style>
+</head>
+<body>
+<iframe class="bg-anim" src="FirstLogonAnim.html" scrolling="no"></iframe>
+<div class="container">
+  <div class="logo-wrap">
+    <h1>StumbleDrix X Time</h1>
+    <p>Manage your account</p>
+  </div>
+
+  <div class="card" id="authCard">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">Login</div>
+      <div class="tab" onclick="switchTab('register')">Register</div>
+    </div>
+
+    <form id="loginForm" onsubmit="return doLogin(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="lEmail" placeholder="your@email.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="lPass" placeholder="Enter password" required autocomplete="current-password">
+      </div>
+      <button class="btn" type="submit" id="lBtn">Login</button>
+      <button type="button" class="link" onclick="doForgot()">Forgot password?</button>
+    </form>
+
+    <form id="registerForm" style="display:none" onsubmit="return doRegister(event)">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="rEmail" placeholder="your@email.com" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Display Name</label>
+        <input type="text" id="rDisplay" placeholder="Your in-game display name" maxlength="32" required>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="rPass" placeholder="At least 6 characters" required autocomplete="new-password" minlength="6">
+      </div>
+      <div class="form-group">
+        <label>Confirm Password</label>
+        <input type="password" id="rPass2" placeholder="Confirm password" required autocomplete="new-password" minlength="6">
+      </div>
+      <button class="btn" type="submit" id="rBtn">Create Account</button>
+    </form>
+
+    <div class="msg" id="authMsg"></div>
+  </div>
+
+  <div class="card profile" id="profileCard">
+    <div class="avatar" id="profAvatar">?</div>
+    <h2 id="profName">-</h2>
+    <p class="sub" id="profUser">@-</p>
+
+    <div class="info-row">
+      <span class="label">Display Name</span>
+      <span class="value" id="profDisplay">-</span>
+    </div>
+    <div class="info-row">
+      <span class="label">Email</span>
+      <span class="value" id="profEmail">-</span>
+    </div>
+    <div class="info-row">
+      <span class="label">Account Created</span>
+      <span class="value" id="profCreated">-</span>
+    </div>
+
+    <div class="edit-section">
+      <div class="form-group">
+        <label>Change Display Name</label>
+        <input type="text" id="editDisplay" placeholder="New display name" maxlength="32">
+      </div>
+      <button class="btn btn-sm" onclick="updateDisplayName()">Save Display Name</button>
+    </div>
+
+    <div class="msg" id="profMsg"></div>
+    <button class="btn btn-launch-style" onclick="copyToken()" style="margin-top:20px">Copy Session Token</button>
+    <div class="hint">
+      Paste the clipboard into<br>
+      <code>Mods/StumbleDrixXTime_auth.json</code>
+    </div>
+    <button class="btn-outline" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://hdgjprvsaovblpnukjys.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_bCpptbzpNzoClmDfRDewOw_oV_zerV-';
+
+let session = null;
+try { const raw = localStorage.getItem('sm_session'); if (raw) session = JSON.parse(raw); } catch(e) {}
+let profile = null;
+let authUserEmail = '';
+let recoveryMode = false;
+
+// Handle auth links: confirmation & password recovery come back with tokens in URL hash
+(function handleAuthHash() {
+  if (!location.hash) return;
+  const params = new URLSearchParams(location.hash.substring(1));
+  const accessToken = params.get('access_token');
+  const refreshToken = params.get('refresh_token');
+  const type = params.get('type');
+  const errorDesc = params.get('error_description');
+
+  if (errorDesc) {
+    setTimeout(() => showMsg('authMsg', decodeURIComponent(errorDesc.replace(/\+/g, ' ')), false), 100);
+    history.replaceState(null, '', location.pathname);
+    return;
+  }
+
+  if (accessToken) {
+    session = { access_token: accessToken, refresh_token: refreshToken || '' };
+    localStorage.setItem('sm_session', JSON.stringify(session));
+    history.replaceState(null, '', location.pathname);
+
+    if (type === 'recovery') {
+      recoveryMode = true;
+      setTimeout(showRecoveryScreen, 100);
+      return;
+    }
+    // signup/confirmation -> fall through to loadProfile
+  }
+})();
+
+if (session?.access_token && !recoveryMode) loadProfile();
+
+function showConfirmScreen(email) {
+  document.getElementById('authCard').innerHTML =
+    '<div style="text-align:center;padding:8px 0 4px">' +
+      '<div style="display:inline-flex;width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#9b30ff 0%,#6a1bb0 100%);align-items:center;justify-content:center;margin-bottom:18px;box-shadow:0 8px 24px rgba(155,48,255,0.35)">' +
+        '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>' +
+      '</div>' +
+      '<h2 style="margin:0 0 10px;color:#fff;font-size:22px;font-weight:600">Almost there!</h2>' +
+      '<p style="color:var(--text);margin:0 0 6px;font-size:15px;line-height:1.5">We just sent a confirmation link to</p>' +
+      '<p style="color:var(--accent);margin:0 0 22px;font-size:16px;font-weight:600;word-break:break-all">' + email + '</p>' +
+
+      '<div style="background:rgba(155,48,255,0.08);border:1px solid rgba(155,48,255,0.2);border-radius:10px;padding:14px 16px;margin-bottom:22px;text-align:left">' +
+        '<p style="color:var(--text);margin:0 0 8px;font-size:13px;font-weight:600">Quick steps:</p>' +
+        '<ol style="color:var(--text2);margin:0;padding-left:18px;font-size:12px;line-height:1.7">' +
+          '<li>Open your inbox</li>' +
+          '<li>Look for an email from <strong>StumbleDrix X Time</strong></li>' +
+          '<li>Click the <em>Activate my account</em> button</li>' +
+          '<li>Come back here to log in</li>' +
+        '</ol>' +
+      '</div>' +
+
+      '<p style="color:var(--text2);font-size:11px;line-height:1.5;margin:0 0 18px">Did not get the email? Check spam, or wait a minute. The email comes from <code style="background:rgba(255,255,255,0.05);padding:1px 6px;border-radius:3px;font-size:11px">noreply@stumbledrix.mooo.com</code></p>' +
+
+      '<button class="btn-outline" style="width:100%" onclick="location.reload()">Back to Login</button>' +
+    '</div>';
+}
+
+function showRecoveryScreen() {
+  document.getElementById('authCard').innerHTML =
+    '<div style="text-align:center;padding:8px 0 16px">' +
+    '<h2 style="margin-bottom:8px;color:var(--accent)">Set a New Password</h2>' +
+    '<p style="color:var(--text2);font-size:13px;margin-bottom:20px">Choose a new password for your account.</p>' +
+    '</div>' +
+    '<div class="form-group"><label>New Password</label>' +
+    '<input type="password" id="recPass" placeholder="At least 6 characters" minlength="6"></div>' +
+    '<div class="form-group"><label>Confirm Password</label>' +
+    '<input type="password" id="recPass2" placeholder="Confirm"></div>' +
+    '<button class="btn" onclick="doUpdatePassword()">Update Password</button>' +
+    '<div class="msg" id="authMsg"></div>';
+}
+
+async function doUpdatePassword() {
+  const p1 = document.getElementById('recPass').value;
+  const p2 = document.getElementById('recPass2').value;
+  clearMsg('authMsg');
+  if (p1.length < 6) { showMsg('authMsg', 'Password too short', false); return; }
+  if (p1 !== p2) { showMsg('authMsg', 'Passwords do not match', false); return; }
+
+  try {
+    const r = await fetch(SUPABASE_URL + '/auth/v1/user', {
+      method: 'PUT', headers: authHeaders(),
+      body: JSON.stringify({ password: p1 })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.msg || d.error_description || 'Update failed');
+    showMsg('authMsg', 'Password updated! Redirecting...', true);
+    setTimeout(() => { recoveryMode = false; location.reload(); }, 1500);
+  } catch (err) { showMsg('authMsg', err.message, false); }
+}
+
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach((el, i) => el.classList.toggle('active', i === (t === 'login' ? 0 : 1)));
+  document.getElementById('loginForm').style.display = t === 'login' ? '' : 'none';
+  document.getElementById('registerForm').style.display = t === 'register' ? '' : 'none';
+  clearMsg('authMsg');
+}
+
+function showMsg(id, text, ok) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + (ok ? 'ok' : 'err');
+}
+function clearMsg(id) { document.getElementById(id).className = 'msg'; }
+
+function baseHeaders() {
+  return { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' };
+}
+function authHeaders() {
+  return { ...baseHeaders(), 'Authorization': 'Bearer ' + session.access_token };
+}
+
+async function doRegister(e) {
+  e.preventDefault();
+  const btn = document.getElementById('rBtn');
+  const email = document.getElementById('rEmail').value.trim().toLowerCase();
+  const display = document.getElementById('rDisplay').value.trim();
+  const pw = document.getElementById('rPass').value;
+  if (pw !== document.getElementById('rPass2').value) {
+    showMsg('authMsg', 'Passwords do not match', false);
+    return false;
+  }
+  btn.disabled = true; btn.textContent = 'Creating...';
+  clearMsg('authMsg');
+  try {
+    // Check display name availability first
+    const availR = await fetch(SUPABASE_URL + '/rest/v1/rpc/is_display_name_available', {
+      method: 'POST', headers: baseHeaders(),
+      body: JSON.stringify({ p_name: display })
+    });
+    if (availR.ok) {
+      const txt = (await availR.text()).trim();
+      if (txt !== 'true') throw new Error('Display name already taken');
+    }
+
+    const redirectTo = location.origin + location.pathname;
+    const body = {
+      email, password: pw,
+      data: { display_name: display }
+    };
+    const r = await fetch(SUPABASE_URL + '/auth/v1/signup?redirect_to=' + encodeURIComponent(redirectTo), {
+      method: 'POST', headers: baseHeaders(), body: JSON.stringify(body)
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.msg || d.error_description || d.error || 'Registration failed');
+
+    if (d.access_token) {
+      // Email confirmation is disabled -> log in immediately
+      session = { access_token: d.access_token, refresh_token: d.refresh_token };
+      localStorage.setItem('sm_session', JSON.stringify(session));
+      showMsg('authMsg', 'Account created!', true);
+      setTimeout(() => loadProfile(), 400);
+    } else {
+      // Email verification enabled -> user must click email link
+      showConfirmScreen(email);
+    }
+  } catch (err) {
+    showMsg('authMsg', err.message, false);
+  }
+  finally { btn.disabled = false; btn.textContent = 'Create Account'; }
+  return false;
+}
+
+async function doLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('lBtn');
+  const email = document.getElementById('lEmail').value.trim().toLowerCase();
+  const pw = document.getElementById('lPass').value;
+  btn.disabled = true; btn.textContent = 'Logging in...';
+  clearMsg('authMsg');
+  try {
+    const r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+      method: 'POST', headers: baseHeaders(), body: JSON.stringify({ email, password: pw })
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error_description || d.msg || d.error || 'Login failed');
+
+    session = { access_token: d.access_token, refresh_token: d.refresh_token };
+    localStorage.setItem('sm_session', JSON.stringify(session));
+    showMsg('authMsg', 'Login successful!', true);
+    setTimeout(() => loadProfile(), 400);
+  } catch (err) {
+    showMsg('authMsg', err.message, false);
+  }
+  finally { btn.disabled = false; btn.textContent = 'Login'; }
+  return false;
+}
+
+async function doForgot() {
+  const email = document.getElementById('lEmail').value.trim().toLowerCase();
+  clearMsg('authMsg');
+  if (!email) { showMsg('authMsg', 'Enter your email first', false); return; }
+
+  try {
+    const redirectTo = location.origin + location.pathname;
+    const r = await fetch(SUPABASE_URL + '/auth/v1/recover?redirect_to=' + encodeURIComponent(redirectTo), {
+      method: 'POST', headers: baseHeaders(),
+      body: JSON.stringify({ email })
+    });
+    if (!r.ok) {
+      const d = await r.json().catch(() => ({}));
+      throw new Error(d.msg || d.error_description || d.error || 'Could not send reset email');
+    }
+    showMsg('authMsg', 'Password reset email sent! Check your inbox.', true);
+  } catch (err) {
+    showMsg('authMsg', err.message, false);
+  }
+}
+
+async function loadProfile() {
+  try {
+    const userR = await fetch(SUPABASE_URL + '/auth/v1/user', { headers: authHeaders() });
+    if (!userR.ok) { logout(); return; }
+    const u = await userR.json();
+    authUserEmail = u.email || '';
+
+    const profR = await fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + u.id + '&select=*', { headers: authHeaders() });
+    const profArr = await profR.json();
+    profile = (profArr && profArr[0]) || { id: u.id, email: authUserEmail, display_name: u.email?.split('@')[0] || '?', created_at: u.created_at };
+
+    document.getElementById('authCard').style.display = 'none';
+    document.getElementById('profileCard').style.display = 'block';
+
+    const name = profile.display_name || authUserEmail.split('@')[0];
+    document.getElementById('profAvatar').textContent = (name[0] || '?').toUpperCase();
+    document.getElementById('profName').textContent = name;
+    document.getElementById('profUser').textContent = authUserEmail;
+    document.getElementById('profDisplay').textContent = profile.display_name || 'Not set';
+    document.getElementById('profEmail').textContent = authUserEmail;
+    document.getElementById('editDisplay').value = profile.display_name || '';
+    const created = new Date(profile.created_at || u.created_at);
+    document.getElementById('profCreated').textContent = created.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  } catch (err) { logout(); }
+}
+
+async function updateDisplayName() {
+  const dn = document.getElementById('editDisplay').value.trim();
+  if (!dn) { showMsg('profMsg', 'Enter a display name', false); return; }
+  clearMsg('profMsg');
+  try {
+    const availR = await fetch(SUPABASE_URL + '/rest/v1/rpc/is_display_name_available', {
+      method: 'POST', headers: authHeaders(),
+      body: JSON.stringify({ p_name: dn, p_exclude_user: profile.id })
+    });
+    const availBody = await availR.text();
+    if (availBody.trim() !== 'true') throw new Error('Display name already taken');
+
+    const r = await fetch(SUPABASE_URL + '/rest/v1/profiles?id=eq.' + profile.id, {
+      method: 'PATCH',
+      headers: { ...authHeaders(), 'Prefer': 'return=representation' },
+      body: JSON.stringify({ display_name: dn })
+    });
+    if (!r.ok) {
+      const d = await r.json();
+      throw new Error(d.message || 'Update failed');
+    }
+    profile.display_name = dn;
+    document.getElementById('profDisplay').textContent = dn;
+    document.getElementById('profName').textContent = dn;
+    document.getElementById('profAvatar').textContent = dn[0].toUpperCase();
+    showMsg('profMsg', 'Display name updated!', true);
+  } catch (err) {
+    showMsg('profMsg', err.message, false);
+  }
+}
+
+function copyToken() {
+  if (!session) return;
+  const tok = session.access_token + '|' + session.refresh_token;
+  const payload = JSON.stringify({ token: tok });
+  navigator.clipboard.writeText(payload).then(() => {
+    showMsg('profMsg', 'Token has been copied! Now paste it in the auth token screen.', true);
+  });
+}
+
+function logout() {
+  if (session?.access_token) {
+    fetch(SUPABASE_URL + '/auth/v1/logout', { method: 'POST', headers: authHeaders() }).catch(() => {});
+  }
+  localStorage.removeItem('sm_session');
+  session = null; profile = null; authUserEmail = '';
+  document.getElementById('authCard').style.display = '';
+  document.getElementById('profileCard').style.display = 'none';
+  clearMsg('authMsg'); clearMsg('profMsg');
+}
+</script>
+</body>
+</html>
