@@ -222,7 +222,7 @@ function showForgotScreen(email) {
   document.getElementById('authCard').innerHTML =
     '<div style="text-align:center;padding:8px 0 16px">' +
     '<h2 style="margin-bottom:8px;color:var(--accent)">Reset Password</h2>' +
-    '<p style="color:var(--text2);font-size:13px;margin-bottom:20px">Enter your email, then type the 6-digit code from your inbox.</p>' +
+    '<p style="color:var(--text2);font-size:13px;margin-bottom:20px">Enter your email, then type the 8-digit code from your inbox.</p>' +
     '</div>' +
     '<form id="resetEmailForm" onsubmit="return doSendResetCode(event)">' +
       '<div class="form-group"><label>Email</label>' +
@@ -230,8 +230,8 @@ function showForgotScreen(email) {
       '<button class="btn" type="submit" id="resetSendBtn">Send Code</button>' +
     '</form>' +
     '<form id="resetCodeForm" style="display:none" onsubmit="return doVerifyResetCode(event)">' +
-      '<div class="form-group"><label>6-Digit Code</label>' +
-      '<input type="text" id="resetCode" placeholder="123456" required inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code"></div>' +
+      '<div class="form-group"><label>8-Digit Code</label>' +
+      '<input type="text" id="resetCode" placeholder="12345678" required inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="one-time-code"></div>' +
       '<div class="form-group"><label>New Password</label>' +
       '<input type="password" id="resetPass" placeholder="At least 6 characters" required autocomplete="new-password" minlength="6"></div>' +
       '<div class="form-group"><label>Confirm Password</label>' +
@@ -398,7 +398,7 @@ async function doSendResetCode(e) {
     resetEmail = email;
     document.getElementById('resetEmailForm').style.display = 'none';
     document.getElementById('resetCodeForm').style.display = '';
-    showMsg('authMsg', 'Reset code sent! Check your inbox and enter the 6-digit code.', true);
+    showMsg('authMsg', 'Reset code sent! Check your inbox and enter the 8-digit code.', true);
   } catch (err) {
     showMsg('authMsg', err.message, false);
   }
@@ -414,7 +414,7 @@ async function doVerifyResetCode(e) {
   const p2 = document.getElementById('resetPass2').value;
   clearMsg('authMsg');
 
-  if (!/^\d{6}$/.test(code)) { showMsg('authMsg', 'Enter the 6-digit code', false); return false; }
+  if (!/^\d{8}$/.test(code)) { showMsg('authMsg', 'Enter the 8-digit code', false); return false; }
   if (p1.length < 6) { showMsg('authMsg', 'Password too short', false); return false; }
   if (p1 !== p2) { showMsg('authMsg', 'Passwords do not match', false); return false; }
 
